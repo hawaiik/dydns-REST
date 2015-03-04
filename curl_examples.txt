@@ -1,0 +1,29 @@
+Create subdomains:
+#This will create a subdomain and will return you a password for updates
+#requires TOKEN
+
+curl -i -H "Content-Type: application/json" -X POST -d '{"subdomain":"sub1","username":"user1","token":"2NVQKFHHV0LztHw"}' http://127.0.0.1:5000/ddns/create
+
+Get all subdomains:
+#This will list all subdomains
+#requires TOKEN
+
+curl -i "http://127.0.0.1:5000/ddns?token=2NVQKFHHV0LztHw"
+
+Get info of one subdomain:
+#This will list info of one subdomain
+#requires TOKEN
+
+curl -i "http://127.0.0.1:5000/ddns/info/test1?token=2NVQKFHHV0LztHw"
+
+Upate subdomain:
+#This will update a subdomain / ip is optional
+#requires password
+
+curl -i "http://127.0.0.1:5000/ddns/update?subdomain=sub1&username=user1&password=password1&ip=xx.xx.xx.xx"
+
+Delete subdomain:
+#This will delete a subdomain
+#requires TOKEN
+
+curl -i -X DELETE "http://127.0.0.1:5000/ddns/delete/sub1?token=2NVQKFHHV0LztHw"
