@@ -80,6 +80,7 @@ def update_subdomain():
 	db['subdomains'].update({'subdomain':entry['subdomain']},\
 		{'$set':{'ip':ip,'last_update':datetime.utcnow()}},\
 		upsert=False, multi=False)
+	updateDNS(entry,ip)
 	return jsonify({'result':'Subdomain updated.'})
 
 @app.route('/ddns/delete/<subdomain>', methods=['DELETE'])
@@ -88,7 +89,9 @@ def delete_subdomain(subdomain):
 	not check_password_hash(app.config['TOKEN'],request.args['token']):
 		abort(401)
 	if checksub(subdomain):
+		entry = getEntry(subdomain)
 		db['subdomains'].remove({'subdomain':subdomain})
+		deleteDNS(entry)
 		return jsonify({'result':'Subdomain deleted.'})
 	abort(404)
 
@@ -109,6 +112,32 @@ def checksub(subdomain):
 def toJson(data):
 	"""Convert Mongo object(s) to JSON"""
 	return json.dumps(data, default=json_util.default)
+
+def deleteDNS(entry):
+	update = []
+	update.append('server '+app.config['DNSSERVER'])
+	update.append('zone '+app.config['ZONE'])
+	update.append('update delete '+entry['subdomain']+\
+		'.'+app.config['ZONE']+'.')
+	update.append('send')
+	opipe = os.popen(app.config['NSCMD']+app.config['DNSKEY'],'w')
+	for z in x:
+		opipe.write("%s\n" % z)
+	opipe.close()	
+
+def updateDNS(entry,ip):
+	update = []
+	update.append('server '+app.config['DNSSERVER'])
+	update.append('zone '+app.config['ZONE'])
+	update.append('update delete '+entry['subdomain']+\
+		'.'+app.config['ZONE']+'.')
+	update.append('update add '+entry['subdomain']+\
+		'.'+app.config['ZONE']+'. 60 A '+ip)
+	update.append('send')
+	opipe = os.popen(app.config['NSCMD']+app.config['DNSKEY'],'w')
+	for z in x:
+		opipe.write("%s\n" % z)
+	opipe.close()
 
 @app.errorhandler(404)
 def not_found(error):
