@@ -6,6 +6,7 @@ from bson import json_util
 from pwgen import pwgen
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
@@ -132,7 +133,7 @@ def updateDNS(entry,ip):
 	update.append('update delete '+entry['subdomain']+\
 		'.'+app.config['ZONE']+'.')
 	update.append('update add '+entry['subdomain']+\
-		'.'+app.config['ZONE']+'. 60 A '+ip)
+		'.'+app.config['ZONE']+'. 600 A '+ip)
 	update.append('send')
 	opipe = os.popen(app.config['NSCMD']+app.config['DNSKEY'],'w')
 	for z in x:
