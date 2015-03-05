@@ -9,5 +9,4 @@ requirements:
 to do:
 
 - README
-- Send updates to nsupdate
 - Example for bind configs
