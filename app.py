@@ -11,6 +11,7 @@ import os
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
 connection = Connection('localhost', 27017)
+connection.mydb.authenticate(app.config['DBUSER'],app.config['DBPW'])
 db = connection.mydb
 
 @app.route('/')
