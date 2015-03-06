@@ -134,7 +134,7 @@ def updateDNS(entry,ip):
 	update.append('update delete '+entry['subdomain']+\
 		'.'+app.config['ZONE']+'.')
 	update.append('update add '+entry['subdomain']+\
-		'.'+app.config['ZONE']+'. 600 A '+ip)
+		'.'+app.config['ZONE']+'. 60 A '+ip)
 	update.append('send')
 	opipe = os.popen(app.config['NSCMD']+app.config['DNSKEY'],'w')
 	for x in update:
