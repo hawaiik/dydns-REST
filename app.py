@@ -7,6 +7,7 @@ from pwgen import pwgen
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import os
+from base64 import b64decode
 
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
@@ -77,6 +78,28 @@ def update_subdomain():
 		abort(401)
 	if 'ip' in request.args:
 		ip = request.args['ip']
+	else:
+		ip = request.environ['REMOTE_ADDR']
+	db['subdomains'].update({'subdomain':entry['subdomain']},\
+		{'$set':{'ip':ip,'last_update':datetime.utcnow()}},\
+		upsert=False, multi=False)
+	updateDNS(entry,ip)
+	return jsonify({'result':'Subdomain updated.'})
+
+@app.route('/nic/update',methods=['GET'])
+def update_dyndnsStyle():
+	if not 'hostname' in request.args or not 'system' in request.args:
+		return jsonify({'Comment': 'To update a subdomain, send...'}),400
+	subdomain = request.args['hostname'].split('.')[0]
+	entry = getEntry(subdomain)
+	if len(entry) == 0:
+		abort(404)
+	header = b64decode(request.headers.get('Authorization').split()[1]).split(':')
+	if not header[0] == entry['username'] or \
+	not check_password_hash(entry['password'],header[1]):
+		abort(401)
+	if 'myip' in request.args:
+		ip = request.args['myip']
 	else:
 		ip = request.environ['REMOTE_ADDR']
 	db['subdomains'].update({'subdomain':entry['subdomain']},\
