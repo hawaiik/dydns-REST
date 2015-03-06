@@ -123,8 +123,8 @@ def deleteDNS(entry):
 		'.'+app.config['ZONE']+'.')
 	update.append('send')
 	opipe = os.popen(app.config['NSCMD']+app.config['DNSKEY'],'w')
-	for z in x:
-		opipe.write("%s\n" % z)
+	for x in update:
+		opipe.write("%s\n" % x)
 	opipe.close()	
 
 def updateDNS(entry,ip):
@@ -137,8 +137,8 @@ def updateDNS(entry,ip):
 		'.'+app.config['ZONE']+'. 600 A '+ip)
 	update.append('send')
 	opipe = os.popen(app.config['NSCMD']+app.config['DNSKEY'],'w')
-	for z in x:
-		opipe.write("%s\n" % z)
+	for x in update:
+		opipe.write("%s\n" % x)
 	opipe.close()
 
 @app.errorhandler(404)
