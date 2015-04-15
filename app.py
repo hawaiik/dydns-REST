@@ -106,7 +106,7 @@ def update_dyndnsStyle():
 		{'$set':{'ip':ip,'last_update':datetime.utcnow()}},\
 		upsert=False, multi=False)
 	updateDNS(entry,ip)
-	return 'good '+ip, 200
+	return jsonify({'result':'Subdomain updated.'})
 
 @app.route('/ddns/delete/<subdomain>', methods=['DELETE'])
 def delete_subdomain(subdomain):
