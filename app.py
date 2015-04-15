@@ -12,12 +12,14 @@ from base64 import b64decode
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
 connection = Connection('localhost', 27017)
-connection.mydb.authenticate(app.config['DBUSER'],app.config['DBPW'])
+connection.mydb.authenticate(app.config['DBUSER'], app.config['DBPW'])
 db = connection.mydb
+
 
 @app.route('/')
 def index():
-    return "Hello, World!"
+	ip = request.environ['REMOTE_ADDR']
+    return "<html><head><title>Current IP Check</title></head><body>Current IP Address: "+ip+"</body></html>"
 
 @app.route('/ddns',methods=['GET'])
 def get_subdomains():
