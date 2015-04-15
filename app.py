@@ -18,7 +18,7 @@ db = connection.mydb
 
 @app.route('/')
 def index():
-	ip = request.environ['REMOTE_ADDR']
+    ip = request.environ['REMOTE_ADDR']
     return "<html><head><title>Current IP Check</title></head><body>Current IP Address: "+ip+"</body></html>"
 
 @app.route('/ddns',methods=['GET'])
