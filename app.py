@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from flask import Flask, jsonify, abort, make_response, request
-from pymongo import Connection
+from pymongo import MongoClient
 import json
 from bson import json_util
 from pwgen import pwgen
@@ -11,14 +11,15 @@ from base64 import b64decode
 
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
-connection = Connection('localhost', 27017)
+connection = MongoClient('localhost', 27017)
 connection.mydb.authenticate(app.config['DBUSER'], app.config['DBPW'])
 db = connection.mydb
 
 
 @app.route('/')
 def index():
-    ip = request.environ['REMOTE_ADDR']
+    #ip = request.environ['REMOTE_ADDR']
+    ip = request.remote_addr
     return "<html><head><title>Current IP Check</title></head><body>Current IP Address: "+ip+"</body></html>"
 
 @app.route('/ddns',methods=['GET'])
